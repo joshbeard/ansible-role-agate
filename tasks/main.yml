@@ -1,0 +1,79 @@
+- name: Agate | Check Current Version
+  ansible.builtin.shell: "agate --version 2>&1 | grep -oh -E '[0-9]+.[0-9].[0-9]'"
+  args:
+    warn: no
+  register: current_version
+  ignore_errors: true
+  changed_when: agate_version != current_version.stdout
+
+- name: Agate | Download
+  ansible.builtin.get_url:
+    url: "{{ agate_source }}"
+    dest: "/tmp/agate.gz"
+    mode: '0440'
+    force: true
+  register: download
+  when: agate_version != current_version.stdout
+
+- name: Agate | Extract
+  ansible.builtin.command: "gunzip agate.gz"
+  args:
+    chdir: /tmp/
+    creates: "/tmp/agate"
+  register: extract
+  when: download.changed
+
+- name: Agate | Install
+  ansible.builtin.command: "mv /tmp/agate /usr/local/bin/agate"
+  args:
+    chdir: /tmp/
+  when: extract.changed
+
+- name: Agate | Executable
+  ansible.builtin.file:
+    state: file
+    path: /usr/local/bin/agate
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Agate | Configure systemd service
+  ansible.builtin.template:
+    src: agate.service
+    dest: "{{ agate_systemd_dir }}/agate.service"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload agate
+  register: systemd_file
+
+- name: Agate | Create data directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ agate_data_dir }}/{{ item }}"
+  loop:
+    - .certificates
+    - content
+
+- name: Agate | rsyslog config
+  ansible.builtin.copy:
+    src: agate.rsyslog.conf
+    dest: /etc/rsyslog.d/agate.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload rsyslogd
+
+- name: Agate | logrotate config
+  ansible.builtin.copy:
+    src: agate.rsyslog.conf
+    dest: /etc/logrotate.d/agate
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Agate | Service
+  ansible.builtin.systemd:
+    state: started
+    daemon_reload: yes
+    name: agate

@@ -1,0 +1,22 @@
+# List of hostnames to serve
+agate_hosts: []
+
+# The version number (X.Y.Z) of Agate to download and install.
+# This should match a release on GitHub.
+agate_version: '3.2.3'
+
+# The URL for the Git repository to clone for installation.
+agate_source: "https://github.com/mbrubeck/agate/releases/download/v{{ agate_version }}/agate.x86_64-unknown-linux-gnu.gz"
+
+# The absolute path to install the 'agate' executable to.
+agate_dest: /usr/local/bin/agate
+
+# The absolute path to the root content directory.
+# A '.certificates' and 'content' sub-directory will be created here.
+agate_data_dir: /srv/gemini
+
+# Optional startup arguments for Agate.
+agate_start_args: ''
+
+# The absolute path to the systemd configuration directory.
+agate_systemd_dir: /etc/systemd/system
