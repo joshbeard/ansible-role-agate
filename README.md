@@ -53,6 +53,24 @@ The absolute path to the systemd configuration directory.
 
 Default: `/etc/systemd/system`
 
+### agate_user
+
+The system user to run the Agate Gemini server as and own the content directories.
+
+Default: _gemini_
+
+### agate_group
+
+The system group to run the Agate Gemini server as and own the content directories.
+
+Default: _gemini_
+
+### agate_manage_user
+
+Toggles managing the user with this role
+
+Default: `true`
+
 ### agate_start_args
 
 Optional startup arguments for Agate.

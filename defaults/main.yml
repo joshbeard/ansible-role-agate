@@ -20,3 +20,10 @@ agate_start_args: ''
 
 # The absolute path to the systemd configuration directory.
 agate_systemd_dir: /etc/systemd/system
+
+# The system user to run the Agate Gemini server as and own the content directories.
+agate_user: gemini
+# The system group to run the Agate Gemini server as and own the content directories.
+agate_group: gemini
+# Toggles managing the user with this role
+agate_manage_user: true

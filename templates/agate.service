@@ -28,5 +28,8 @@ StandardError=syslog
 # a separate file
 SyslogIdentifier=gemini
 
+User={{ agate_user }}
+Group={{ agate_group }}
+
 [Install]
 WantedBy=multi-user.target

@@ -37,6 +37,16 @@
     group: root
     mode: '0755'
 
+- name: Agate | Service User
+  ansible.builtin.user:
+    name: "{{ agate_user }}"
+    comment: Agate Gemini
+    shell: "/sbin/nologin"
+    home: "{{ agate_data_dir }}"
+    system: true
+    create_home: false
+  when: agate_manage_user is true
+
 - name: Agate | Configure systemd service
   ansible.builtin.template:
     src: agate.service
@@ -51,6 +61,8 @@
   ansible.builtin.file:
     state: directory
     path: "{{ agate_data_dir }}/{{ item }}"
+    owner: "{{ agate_user }}"
+    group: "{{ agate_group }}"
   loop:
     - .certificates
     - content
